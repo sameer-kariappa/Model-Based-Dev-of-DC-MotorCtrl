@@ -1,4 +1,4 @@
-# Model Based Design applied to a DC Motor Controller
+## Model Based Design applied to a DC Motor Controller
 
 As we build "Smarter" electromechanical systems, Model Based Design (MBD) allows you to quickly and effectively build such control systems while effectively exploring your design options.
 
