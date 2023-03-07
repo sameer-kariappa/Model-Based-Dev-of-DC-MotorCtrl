@@ -35,7 +35,7 @@ jobs:
       - name: Run commands
         uses: matlab-actions/run-command@v1
         with:
-          command: [status,errmsg]=license('checkout','sl_verification_validation'); javaVer=version('-java'); if (status~=1 || isempty(javaVer)) disp('No Checks - SlCheck License Missing'); else openProject('DCMtrCtrl.prj'); runProjectChecks; end
+          command: status=license('checkout','sl_verification_validation'); javaVer=version('-java'); if (status~=1 || isempty(javaVer)) disp('No Checks - SlCheck License Missing'); else openProject('DCMtrCtrl.prj'); runProjectChecks; end
 
   my-test-job:
     name: Test Simulink Models with Simulink test - MiL only
