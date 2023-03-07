@@ -35,7 +35,7 @@ jobs:
       - name: Run commands
         uses: matlab-actions/run-command@v1
         with:
-          command: openProject('DCMtrCtrl.prj'); runProjectChecks
+          command: [status,errmsg]=license('checkout','sl_verification_validation'); javaVer=version('-java'); if (status~=1 || isempty(javaVer)) disp('No Checks - SlCheck License Missing'); else openProject('DCMtrCtrl.prj'); runProjectChecks; end
 
   my-test-job:
     name: Test Simulink Models with Simulink test - MiL only
@@ -47,3 +47,7 @@ jobs:
         uses: matlab-actions/setup-matlab@v1
       - name: Run tests and generate artifacts
         uses: matlab-actions/run-tests@v1
+        with:
+          test-results-pdf: GeneratedArtifacts/TestResults/dcmtr_PIDCtrl_testResults.pdf
+          test-results-junit: GeneratedArtifacts/TestResults/dcmtr_PIDCtrl_testResults.xml
+          code-coverage-cobertura: GeneratedArtifacts/TestResults/dcmtr_PIDCtrl_coverage.xml
