@@ -1,6 +1,18 @@
 name: DC Motor Controller Verification
 on: [push]
 jobs:
+  basic-connectionTest-job:
+    name: Simple display command to confirm the pipelines are correctly setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+      - name: Run commands
+        uses: matlab-actions/run-command@v1
+        with:
+          command: disp('CI Workflow up and running!')
   my-check-job:
     name: Check Simulink Models for MISRA C Compliance
     runs-on: ubuntu-latest
@@ -24,4 +36,4 @@ jobs:
       - name: Run commands
         uses: matlab-actions/run-command@v1
         with:
-          command: disp('Tests Will be added here soon!')
+          command: runProjectTests
