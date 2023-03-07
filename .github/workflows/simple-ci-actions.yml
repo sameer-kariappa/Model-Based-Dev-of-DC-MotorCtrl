@@ -1,7 +1,7 @@
 name: DC Motor Controller Verification
 on: [push]
 jobs:
-  my-job:
+  my-check-job:
     name: Check Simulink Models for MISRA C Compliance
     runs-on: ubuntu-latest
     steps:
@@ -13,8 +13,7 @@ jobs:
         uses: matlab-actions/run-command@v1
         with:
           command: runProjectChecks
-
-  my-job:
+  my-test-job:
     name: Test Simulink Models based on Requirements
     runs-on: ubuntu-latest
     steps:
