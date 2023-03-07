@@ -1,6 +1,16 @@
+# Basic template exmple of setting up CI pipeline with GitHub actions
+
 name: DC Motor Controller Verification
-on: [push]
+
+on: 
+    # Triggers the workflow only when changes are directly made to the main branch, or when a pull request is made to the main branch
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
+
 jobs:
+  
   basic-connectionTest-job:
     name: Simple display command to confirm the pipelines are correctly setup
     runs-on: ubuntu-latest
@@ -13,6 +23,7 @@ jobs:
         uses: matlab-actions/run-command@v1
         with:
           command: disp('CI Workflow up and running!')
+
   my-check-job:
     name: Check Simulink Models for MISRA C Compliance
     runs-on: ubuntu-latest
@@ -25,15 +36,14 @@ jobs:
         uses: matlab-actions/run-command@v1
         with:
           command: openProject('DCMtrCtrl.prj'); runProjectChecks
+
   my-test-job:
-    name: Test Simulink Models based on Requirements
+    name: Test Simulink Models with Simulink test - MiL only
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v1
-      - name: Run commands
-        uses: matlab-actions/run-command@v1
-        with:
-          command: openProject('DCMtrCtrl.prj'); runProjectTests
+      - name: Run tests and generate artifacts
+        uses: matlab-actions/run-tests@v1
