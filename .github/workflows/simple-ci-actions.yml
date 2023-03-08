@@ -22,7 +22,7 @@ jobs:
       - name: Run commands
         uses: matlab-actions/run-command@v1
         with:
-          command: ver -support
+          command: disp('MATLAB works on this runner!'); status = license('test','sl_verification_validation')
 
   my-check-job:
     name: Check Simulink Models for MISRA C Compliance
@@ -61,6 +61,24 @@ jobs:
         with:
           name: Controller Test Results
           path: GeneratedArtifacts/TestResults/
+
+  my-codeGen-job:
+    name: Generate C Code of Controller Models used in this Project
+    if: 1==0                # This  job is intentioanlly getting skipped, as MathWorks does not support transformation processes like code generation on public GitHub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+      - uses: matlab-actions/run-command@v1
+        with:
+          command: openProject('DCMtrCtrl.prj'); genCCode;
+      - name: Save generated code in artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Generated Code
+          path: GeneratedArtifacts/WebViews/CodeGen
 
   my-report-job:
     name: Generate Webviews of Models used in this Project

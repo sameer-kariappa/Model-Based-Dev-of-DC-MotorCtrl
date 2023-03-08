@@ -6,7 +6,7 @@
     disp('Generating C Code...')
 
 % Generate C Code
-    mdlName = {'dcmtrCtrl_PID'};
+    mdlName = {'dcmtrCtrl_PID','dcmtrCtrl_PID_wHandCode'};
     slbuild(mdlName) 
     % Saved in currentProject().SimulinkCodeGenFolder
 
