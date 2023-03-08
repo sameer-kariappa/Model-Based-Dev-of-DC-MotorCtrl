@@ -1,4 +1,4 @@
-% This script is to automate the tests contained in this project
+% This script is to automate the codeGeneration of models contained in this project
 
     prj = matlab.project.currentProject;
     disp(' ')
