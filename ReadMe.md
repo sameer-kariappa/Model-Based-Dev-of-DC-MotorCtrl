@@ -1,4 +1,5 @@
-[![MATLAB](https://github.com/sameer-kariappa/Model-Based-Dev-of-DC-MotorCtrl/actions/workflows/ci.yml/badge.svg)](https://github.com/sameer-kariappa/Model-Based-Dev-of-DC-MotorCtrl/actions/workflows/ci.yml)
+[![MATLAB](https://github.com/sameer-kariappa/Model-Based-Dev-of-DC-MotorCtrl/actions/workflows/simple-ci-actions.yml/badge.svg)](https://github.com/sameer-kariappa/Model-Based-Dev-of-DC-MotorCtrl/actions/workflows/simple-ci-actions.yml)
+[![Generic badge](https://img.shields.io/badge/MATLAB-R2022b-BLUE.svg)](https://shields.io/)
 
 ## Model Based Design applied to a DC Motor Controller
 
