@@ -1,0 +1,32 @@
+
+name: Push Request - Diff to Ancestor, Publish and attach Report
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on pull request events but only for the main branch
+
+  push:
+    branches: [ master ]
+
+jobs:
+  diff-job1:
+    name: Diff to Ancestor, Publish and attach doc report for commenting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+         fetch-depth: 0
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+      - name: Compare Models to Ancestors
+        uses: matlab-actions/run-command@v1
+        with:
+          command: lastpush="${{ github.event.before }}", diffGitHub_push(lastpush)
+      - name: Archive Comparison Reports
+        uses: actions/upload-artifact@v3
+        with:
+           name: diffreports
+           path: GeneratedArtifacts/DiffReports/
+
+#   Copyright 2022 The MathWorks, Inc.

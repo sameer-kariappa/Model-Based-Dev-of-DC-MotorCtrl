@@ -1,2 +1,2 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<Info Type="Shutdown" Visible="0" Icon="" File="Utilities/clear_env.m" Name="clear_env"/>
+<Info Type="Shutdown" Visible="0" Icon="" File="Utilities/helperFcns_Project/clear_env.m" Name="clear_env"/>
