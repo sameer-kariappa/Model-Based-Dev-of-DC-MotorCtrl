@@ -22,7 +22,7 @@ jobs:
       - name: Compare Models to Ancestors
         uses: matlab-actions/run-command@v1
         with:
-          command: branch ="${{ github.head_ref }}", diffGitHub_pullrequest(branch)
+          command: openProject('DCMtrCtrl.prj'); branch ="${{ github.head_ref }}"; diffGitHub_pullrequest(branch)
       - name: Upload Comparison Reports
         uses: actions/upload-artifact@v3
         with:

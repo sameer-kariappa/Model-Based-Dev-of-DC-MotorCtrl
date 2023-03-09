@@ -1,6 +1,4 @@
 function diffGitHub_push(lastpush)
-    % Open project
-    proj = openProject(pwd);
     
     % List modified models since the last push. Use *** to search recursively for modified 
     % SLX files starting in the current folder

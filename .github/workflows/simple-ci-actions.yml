@@ -61,6 +61,11 @@ jobs:
         with:
           name: Controller Test Results
           path: GeneratedArtifacts/TestResults/
+      - name: Test Summary
+        uses: test-summary/action@v2
+        with:
+          paths: GeneratedArtifacts/TestResults/*.xml
+        if: always()
 
   my-codeGen-job:
     name: Generate C Code of Controller Models used in this Project
