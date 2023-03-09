@@ -11,5 +11,6 @@
     save_system(harnessMdl);
     close_system(harnessMdl);
 
-system('git commit -a -m "Intentionally create fault"')
-system('git push')
+ [~,cmdout] = system('git commit -a -m "Intentionally create fault"');
+ disp(cmdout)
+ [~,cmdout] = system('git push')
