@@ -10,6 +10,8 @@
     blk         = 'dcmtrCtrl_PID_Harness0/Test Assessment';
     stepPath    = 'MONITOR_MAX_VOLT';
     takeAction  = sprintf('verify( abs(V) <= 4.75);');
+    sltest.testsequence.editStep(blk,stepPath,'Action',takeAction)
+
 
 % Save Changes
     save_system(harnessMdl);
