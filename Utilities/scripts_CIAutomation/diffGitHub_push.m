@@ -1,13 +1,4 @@
-function diffGitHub_push(lastpush)
-    
-    % List modified models since the last push. Use *** to search recursively for modified 
-    % SLX files starting in the current folder
-    % git diff --name-only refs/remotes/origin/main  lastpush ***.slx
-    gitCommand = sprintf('git diff --name-only refs/remotes/origin/master %s ***.slx', lastpush);
-    [status,modifiedFiles] = system(gitCommand);
-    assert(status==0, modifiedFiles);
-    modifiedFiles = split(modifiedFiles);
-    modifiedFiles(end) = []; % Removing last element because it is empty
+function diffGitHub_push(modifiedFiles,lastpush)
     
     if isempty(modifiedFiles)
         disp('No modified models to compare.')

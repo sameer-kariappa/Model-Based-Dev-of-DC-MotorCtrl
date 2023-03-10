@@ -9,8 +9,35 @@ on:
     branches: [ master ]
 
 jobs:
-  diff-job1:
-    name: Diff to Ancestor, Publish and attach doc report for commenting
+  diff-branches:
+    name: Diff new branch to previous commit of the branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch1
+        uses: actions/checkout@v3
+        with:
+         ref: ${{ github.event.base_ref }}
+      - name: Checkout branch2
+        uses: actions/checkout@v3
+        with:
+         ref: ${{ github.event.before }}
+      - name: Git Diff
+        id: diff
+        run: |
+          diffA=$(git diff --name-only --diff-filter=A ${{ github.event.base_ref }}..${{ github.event.before }} -- ***.slx)
+          diffM=$(git diff --name-only --diff-filter=M ${{ github.event.base_ref }}..${{ github.event.before }} -- ***.slx)
+          diffD=$(git diff --name-only --diff-filter=D ${{ github.event.base_ref }}..${{ github.event.before }} -- ***.slx)
+          echo "::set-output name=diffA::$diffA"
+          echo "::set-output name=diffM::$diffM"
+          echo "::set-output name=diffM::$diffD"
+          echo "Added SLX files:"
+          echo "${diffA}"
+          echo "Deleted SLX files:"
+          echo "${diffD}"
+
+  publish-diff-job:
+    needs: diff-branches
+    name: Publish and attach doc report for diff'ed SLX files
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -22,7 +49,7 @@ jobs:
       - name: Compare Models to Ancestors
         uses: matlab-actions/run-command@v1
         with:
-          command: openProject('DCMtrCtrl.prj'); lastpush="${{ github.event.before }}"; diffGitHub_push(lastpush)
+          command: openProject('DCMtrCtrl.prj'); lastpush = "${{ github.event.before }}"; changeList="${{ needs.diff-branches.outputs.diffM }}"; diffGitHub_push(changeList,lastpush)
       - name: Archive Comparison Reports
         uses: actions/upload-artifact@v3
         with:
