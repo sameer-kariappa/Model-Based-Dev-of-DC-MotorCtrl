@@ -16,7 +16,7 @@ jobs:
       - name: Checkout branch1
         uses: actions/checkout@v3
         with:
-         ref: ${{ github.event.base_ref }}
+         ref: !
       - name: Checkout branch2
         uses: actions/checkout@v3
         with:
@@ -24,9 +24,11 @@ jobs:
       - name: Git Diff
         id: diff
         run: |
-          diffA=$(git diff --name-only --diff-filter=A ${{ github.event.base_ref }}..${{ github.event.before }} -- ***.slx)
-          diffM=$(git diff --name-only --diff-filter=M ${{ github.event.base_ref }}..${{ github.event.before }} -- ***.slx)
-          diffD=$(git diff --name-only --diff-filter=D ${{ github.event.base_ref }}..${{ github.event.before }} -- ***.slx)
+          latest_commit=$(git rev-parse master);
+          prev_commit=$(git rev-parse master~1);
+          diffA=$(git diff --name-only --diff-filter=A $latest_commit..$prev_commit -- **/*.slx)
+          diffM=$(git diff --name-only --diff-filter=M $latest_commit..$prev_commit -- **/*.slx)
+          diffD=$(git diff --name-only --diff-filter=D $latest_commit..$prev_commit -- **/*.slx)
           echo "::set-output name=diffA::$diffA"
           echo "::set-output name=diffM::$diffM"
           echo "::set-output name=diffM::$diffD"
