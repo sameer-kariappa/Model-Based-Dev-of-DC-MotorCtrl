@@ -59,7 +59,7 @@ function diffGitHub_push(modifiedFiles,lastpush)
         
         % Build git command to get ancestor
         % git show lastpush:models/modelname.slx > modelscopy/modelname_ancestor.slx
-        gitCommand = sprintf('git show refs/remotes/origin/main %s:%s > %s', lastpush, fileName, ancestor);
+        gitCommand = sprintf('git show refs/remotes/origin/master %s:%s > %s', lastpush, fileName, ancestor);
         
         [status, result] = system(gitCommand);
         assert(status==0, result);

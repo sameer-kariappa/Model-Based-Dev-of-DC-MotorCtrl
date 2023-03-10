@@ -34,6 +34,8 @@ jobs:
           echo "${diffA}"
           echo "Deleted SLX files:"
           echo "${diffD}"
+          echo "Modified SLX files:"
+          echo "${diffM}"
 
   publish-diff-job:
     needs: diff-branches
