@@ -13,14 +13,10 @@ jobs:
     name: Diff new branch to previous commit of the branch
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch1
-        uses: actions/checkout@v3
+      - name: Check out repository
+        uses: actions/checkout@v2
         with:
-         ref: !
-      - name: Checkout branch2
-        uses: actions/checkout@v3
-        with:
-         ref: ${{ github.event.before }}
+         fetch-depth: 0
       - name: Git Diff
         id: diff
         run: |
