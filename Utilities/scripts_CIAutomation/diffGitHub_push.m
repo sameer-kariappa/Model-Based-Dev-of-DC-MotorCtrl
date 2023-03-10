@@ -7,7 +7,6 @@ function diffGitHub_push(modifiedFiles,lastpush)
         return
     else
         modifiedFiles = split(modifiedFiles);
-        modifiedFiles(end) = []; % Removing last element because it is empty
         disp('List of Modified SLX Files:')
         disp(modifiedFiles)
     end
