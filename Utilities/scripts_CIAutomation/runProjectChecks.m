@@ -1,13 +1,11 @@
-% This script is to automate the mdlAdvisor checks contained in this project
+function runProjectChecks()
+% This script is to automate the checks contained in this project
 
-    prj = matlab.project.currentProject;
-    disp(' ')
-    disp("Project: " + prj.Name)
-    disp('Running Model Advisor Checks for Misra C:2012 ...')
+% List names of all models for which code is being generated
+    mdlName = {'dcmtrCtrl_PID','dcmtrCtrl_PID_wHandCode'};
 
-% Run the Checks
-    mdlName = {'dcmtrCtrl_PID'};
-    
+% Specify which checks to run. For a list of all checks, look under "Model Advisor checks"
+% at https://www.mathworks.com/help/slcheck/check-model-compliance.html?s_tid=CRUX_lftnav
     checkIDs = {'mathworks.misra.CodeGenSettings',...
         'mathworks.codegen.PCGSupport',...
         'mathworks.misra.BlkSupport',...
@@ -21,11 +19,20 @@
         'mathworks.misra.ModelFunctionInterface',...
         'mathworks.misra.IntegerWordLengths',...
         'mathworks.misra.BusElementNames'};
-    
-    results = ModelAdvisor.run(mdlName,checkIDs,...
-        'DisplayResults','Details',...
-        'ReportFormat','pdf','ReportPath', fullfile(prj.RootFolder,'GeneratedArtifacts','CheckResults'),...
-        'ReportName',[mdlName{1} '_MISRAchecks']);
+
+% Get handle to project
+    prj = matlab.project.currentProject;
+    disp(' ')
+    disp("Project: " + prj.Name)
+    disp('Running Model Advisor Checks for Misra C:2012 ...')
+
+% Run ModelAdvisor Checks
+    for i = 1:length(mdlName)
+        results = ModelAdvisor.run(mdlName,checkIDs,...
+            'DisplayResults','Details',...
+            'ReportFormat','pdf','ReportPath', fullfile(prj.RootFolder,'GeneratedArtifacts','CheckResults'),...
+            'ReportName',[mdlName{i} '_MISRAchecks']);
+    end
 
 % Cleanup
     disp('Checks complete.')

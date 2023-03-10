@@ -1,8 +1,8 @@
-function genWebView()
+function genSimpleApp()
 % This script is to automate the webview generation of models contained in this project
 
 % List names of all models for which code is being generated
-    mdlName = {'dcmtr_testharness'};
+    mdlName = {'ssc_dcmtr_sl'};
 
 % Get handle to project
     prj = matlab.project.currentProject;
@@ -11,15 +11,20 @@ function genWebView()
 
 % Generate Webview
     for i = 1:length(mdlName)
-        disp(['Generating Webview of ' mdlName{i} '...'])
+        disp(['Generating WebApp of ' mdlName{i} '...'])
+
+        mkdir(mdlName{i})
+        cd(mdlName{i})
 
         load_system(mdlName{i})
-        mdl_webView = slwebview(mdlName{i}, ...
-            'FollowModelReference','on',...
-            'PackageName', ['WebExplore_' mdlName{i}],...
-            'PackageFolder',fullfile(prj.RootFolder,'GeneratedArtifacts','Webviews'));
+        simulink.compiler.genapp(mdlName{i}, 'AppName', ['App_' mdlName{i}])
         close_system(mdlName{i})
+
+        cd ..
+
+        movefile(mdlName{i},...
+            fullfile(prj.RootFolder,'GeneratedArtifacts','DeployableApps'))
     end
 
 % Cleanup
-    disp('WebView generation complete.')
+    disp('App Generation complete.')

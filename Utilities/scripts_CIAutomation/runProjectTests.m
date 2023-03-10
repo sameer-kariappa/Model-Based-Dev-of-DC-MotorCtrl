@@ -1,66 +1,75 @@
+function results = runProjectTests()
 % This script is to automate the tests contained in this project
 
+% List names of all test files
+    testsName = {'dcmtrCTRL_PID_Tests'};
+
+% Get handle to project
     prj = matlab.project.currentProject;
     disp(' ')
     disp("Project: " + prj.Name)
-    disp('Running Model Tests...')
 
-% Load test file and setup plugins to generate usable test reports
-    testsName = 'dcmtrCTRL_PID_Tests';
-    testSuite = sltest.testmanager.load([testsName '.mldatx']);
-    
-    import matlab.unittest.TestSuite
-    suite = testsuite([testsName '.mldatx']);
-    
-    import matlab.unittest.TestRunner
-    myrunner = TestRunner.withNoPlugins;
 
-    % Publish Results as MLDATX
-        import sltest.plugins.TestManagerResultsPlugin
-        mldatxFileName = fullfile(prj.RootFolder,...
-            'GeneratedArtifacts','TestResults',[testsName '_Results.mldatx']);
-        tmr = TestManagerResultsPlugin('ExportToFile',mldatxFileName); 
-        addPlugin(myrunner,tmr)
+for i = 1:length(testsName)
     
-    % Publish Results as PDF
-        import matlab.unittest.plugins.TestReportPlugin
-        pdfFile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName '.pdf']);
-        trp = TestReportPlugin.producingPDF(pdfFile);
-        addPlugin(myrunner,trp)
-
-    % Publish Results as TAP Report and JUnitFormat
-        import matlab.unittest.plugins.TAPPlugin
-        import matlab.unittest.plugins.XMLPlugin
-        import matlab.unittest.plugins.ToFile
+    disp(['Running Model Tests from: ' testsName{i}])
+    % Load test file and setup plugins to generate usable test reports    
+        sltest.testmanager.load([testsName{i} '.mldatx']);
     
-        tapFile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName '.tap']);
-        tap = TAPPlugin.producingVersion13(ToFile(tapFile));
-        addPlugin(myrunner,tap)
+        import matlab.unittest.TestSuite
+        suite = testsuite([testsName{i} '.mldatx']);
         
-        xmlFile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName '.xml']);
-        p = XMLPlugin.producingJUnitFormat(xmlFile);
-        addPlugin(myrunner,p)
-
-    % Publish Coverage Report
-        import sltest.plugins.coverage.CoverageMetrics
-        cmet = CoverageMetrics('Decision',true,'Condition',true,'MCDC',true);
+        import matlab.unittest.TestRunner
+        myrunner = TestRunner.withNoPlugins;
     
-        import sltest.plugins.coverage.ModelCoverageReport
-        import matlab.unittest.plugins.codecoverage.CoberturaFormat
+        % Publish Results as MLDATX
+            import sltest.plugins.TestManagerResultsPlugin
+            mldatxFileName = fullfile(prj.RootFolder,...
+                'GeneratedArtifacts','TestResults',[testsName{i} '_Results.mldatx']);
+            tmr = TestManagerResultsPlugin('ExportToFile',mldatxFileName); 
+            addPlugin(myrunner,tmr)
         
-        rptfile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName '.xml']);
-        rpt = CoberturaFormat(rptfile);
+        % Publish Results as PDF
+            import matlab.unittest.plugins.TestReportPlugin
+            pdfFile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName{i} '.pdf']);
+            trp = TestReportPlugin.producingPDF(pdfFile);
+            addPlugin(myrunner,trp)
     
-        import sltest.plugins.ModelCoveragePlugin
-        mcp = ModelCoveragePlugin('Collecting',cmet,'Producing',rpt);
+        % Publish Results as TAP Report and JUnitFormat
+            import matlab.unittest.plugins.TAPPlugin
+            import matlab.unittest.plugins.XMLPlugin
+            import matlab.unittest.plugins.ToFile
+        
+            tapFile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName{i} '.tap']);
+            tap = TAPPlugin.producingVersion13(ToFile(tapFile));
+            addPlugin(myrunner,tap)
+            
+            xmlFile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName{i} '.xml']);
+            p = XMLPlugin.producingJUnitFormat(xmlFile);
+            addPlugin(myrunner,p)
     
-        addPlugin(myrunner,mcp)
-            % Turn off command line warnings:
-            warning off Stateflow:cdr:VerifyDangerousComparison
-            warning off Stateflow:Runtime:TestVerificationFailed
+        % Publish Coverage Report
+            import sltest.plugins.coverage.CoverageMetrics
+            cmet = CoverageMetrics('Decision',true,'Condition',true,'MCDC',true);
+        
+            import sltest.plugins.coverage.ModelCoverageReport
+            import matlab.unittest.plugins.codecoverage.CoberturaFormat
+            
+            rptfile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName{i} '.xml']);
+            rpt = CoberturaFormat(rptfile);
+        
+            import sltest.plugins.ModelCoveragePlugin
+            mcp = ModelCoveragePlugin('Collecting',cmet,'Producing',rpt);
+        
+            addPlugin(myrunner,mcp)
+                % Turn off command line warnings:
+                warning off Stateflow:cdr:VerifyDangerousComparison
+                warning off Stateflow:Runtime:TestVerificationFailed
+    
+    % Run the tests
+        results = run(myrunner,suite);
 
-% Run the tests
-    result = run(myrunner,suite)
+end
 
 % Cleanup
     disp('Tests complete.')
