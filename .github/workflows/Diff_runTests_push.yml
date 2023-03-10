@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
          fetch-depth: 0
       - name: Git Diff
@@ -28,8 +28,9 @@ jobs:
           echo "::set-output name=diffA::$diffA"
           echo "::set-output name=diffM::$diffM"
           echo "::set-output name=diffM::$diffD"
-          echo "Added SLX files:"
+          echo "    Refer to Webview folder to see the new SLX."
           echo "${diffA}"
+          echo "    Added SLX files:"
           echo "Deleted SLX files:"
           echo "${diffD}"
           echo "Modified SLX files:"
@@ -53,7 +54,7 @@ jobs:
       - name: Archive Comparison Reports
         uses: actions/upload-artifact@v3
         with:
-           name: diffreports
+           name: push_diffreports
            path: GeneratedArtifacts/DiffReports/
 
 #   Copyright 2022 The MathWorks, Inc.

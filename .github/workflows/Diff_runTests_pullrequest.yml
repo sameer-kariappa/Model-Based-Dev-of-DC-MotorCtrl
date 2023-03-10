@@ -6,10 +6,38 @@ on:
   # Triggers the workflow on pull request events but only for the main branch
 
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
-  diff-job2:
+  diff-branches:
+    name: Diff new branch to previous commit of the branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+         fetch-depth: 0
+      - name: Git Diff
+        id: diff
+        run: |
+          latest_commit=$(git rev-parse master);
+          prev_commit=${{ github.head_ref }};
+          diffA=$(git diff --name-only --diff-filter=A $latest_commit..$prev_commit -- **/*.slx)
+          diffM=$(git diff --name-only --diff-filter=M $latest_commit..$prev_commit -- **/*.slx)
+          diffD=$(git diff --name-only --diff-filter=D $latest_commit..$prev_commit -- **/*.slx)
+          echo "::set-output name=diffA::$diffA"
+          echo "::set-output name=diffM::$diffM"
+          echo "::set-output name=diffM::$diffD"
+          echo "Added SLX files:"
+          echo "${diffA}"
+          echo "    Refer to Webview folder to see the new SLX."
+          echo "Deleted SLX files:"
+          echo "${diffD}"
+          echo "Modified SLX files:"
+          echo "${diffM}"
+
+  publish-diff-job:
+    needs: diff-branches
     name: Diff to Ancestor, Publish and attach doc report for commenting
     runs-on: ubuntu-latest
     steps:
@@ -22,11 +50,11 @@ jobs:
       - name: Compare Models to Ancestors
         uses: matlab-actions/run-command@v1
         with:
-          command: openProject('DCMtrCtrl.prj'); branch ="${{ github.head_ref }}"; diffGitHub_pullrequest(branch)
+          command: openProject('DCMtrCtrl.prj'); changeList="${{ needs.diff-branches.outputs.diffM }}"; diffGitHub_pullrequest(changeList)
       - name: Upload Comparison Reports
         uses: actions/upload-artifact@v3
         with:
-           name: diffreports
+           name: merge_diffreports
            path: GeneratedArtifacts/DiffReports/
 
 #   Copyright 2022 The MathWorks, Inc.

@@ -8,10 +8,9 @@ function diffGitHub_push(modifiedFiles,lastpush)
     else
         modifiedFiles = split(modifiedFiles);
         disp('List of Modified SLX Files:')
+        % modifiedFiles(end) = []; % Removing last element because it is empty
         disp(modifiedFiles)
     end
-    
-    
     
     % Create a temporary folder to store the ancestors of the modified models
     % If you have models with the same name in different folders, consider
