@@ -1,23 +1,36 @@
 function diffGitHub_push(modifiedFiles,lastpush)
     
+    proj = currentProject;
+
     if isempty(modifiedFiles)
         disp('No modified models to compare.')
         return
+    else
+        modifiedFiles = split(modifiedFiles);
+        modifiedFiles(end) = []; % Removing last element because it is empty
+        disp('List of Modified SLX Files:')
+        disp(modifiedFiles)
     end
+    
+    
     
     % Create a temporary folder to store the ancestors of the modified models
     % If you have models with the same name in different folders, consider
     % creating multiple folders to prevent overwriting temporary models
+    disp('Creating a copy of the previous commmits for diff')
     tempdir = fullfile(proj.RootFolder, "modelscopy");
     mkdir(tempdir)
     
     % Generate a comparison report for every modified model file
     for i = 1:numel(modifiedFiles)
+        disp(['Creating report for' modifiedFiles(i)])
         report = diffToAncestor(tempdir,string(modifiedFiles(i)),lastpush);
     end
     
     % Delete the temporary folder
     rmdir modelscopy s
+
+    disp('ReportGen Complete!')
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
