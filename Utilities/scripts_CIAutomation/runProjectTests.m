@@ -2,6 +2,7 @@ function results = runProjectTests()
 % This script is to automate the tests contained in this project
 
 % List names of all test files
+    results = [];
     testsName = {'dcmtrCTRL_PID_Tests'};
 
 % Get handle to project
@@ -44,7 +45,7 @@ for i = 1:length(testsName)
             tap = TAPPlugin.producingVersion13(ToFile(tapFile));
             addPlugin(myrunner,tap)
             
-            xmlFile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName{i} '.xml']);
+            xmlFile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName{i} '_results.xml']);
             p = XMLPlugin.producingJUnitFormat(xmlFile);
             addPlugin(myrunner,p)
     
@@ -55,7 +56,7 @@ for i = 1:length(testsName)
             import sltest.plugins.coverage.ModelCoverageReport
             import matlab.unittest.plugins.codecoverage.CoberturaFormat
             
-            rptfile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName{i} '.xml']);
+            rptfile = fullfile(prj.RootFolder,'GeneratedArtifacts','TestResults',[testsName{i} '_cov.xml']);
             rpt = CoberturaFormat(rptfile);
         
             import sltest.plugins.ModelCoveragePlugin
@@ -67,7 +68,8 @@ for i = 1:length(testsName)
                 warning off Stateflow:Runtime:TestVerificationFailed
     
     % Run the tests
-        results = run(myrunner,suite);
+        result = run(myrunner,suite);
+        results = [results result];
 
 end
 

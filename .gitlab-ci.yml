@@ -1,0 +1,113 @@
+# This script defines the different stages of a CI job to test my DC motor controller using a CICD framework
+#
+# A pipeline is composed of independent jobs that run scripts, grouped into stages.
+# Stages run in sequential order, but jobs within stages run in parallel.
+
+
+stages:          # List of stages for jobs, and their order of execution
+  - diffDoc
+  - check
+  - test
+  - codeGen
+  - webviewGen
+  - simpleAppGen
+  - cleanUpandClose
+
+variables:
+  ARTIFACTS_DOWNLOAD_PATH: "C:/Users/$GITLAB_USER_LOGIN/Downloads"
+
+diffDoc-job:       # This job runs in the model checks stage
+    stage: diffDoc
+    tags:
+      - on-prem
+    script:
+        # Checkout the latest and previous commit
+      - git checkout master
+      - git pull
+      - $latestCommit = git rev-parse HEAD
+      - $previousCommit = git rev-parse HEAD~1
+        # Diff the files to ID what's changed
+      - $diffM= git diff --name-only --diff-filter=M $previousCommit $latestCommit -- **/*.slx
+      - $diffA= git diff --name-only --diff-filter=A $previousCommit $latestCommit -- **/*.slx
+      - $diffD= git diff --name-only --diff-filter=D $previousCommit $latestCommit -- **/*.slx
+      - echo "Modified SLX files:"
+      - echo "$diffM"
+      - echo "Added SLX files:"
+      - echo "$diffA"
+      - echo "Deleted SLX files:"
+      - echo "$diffD"
+        # Pass required information into MATLAB in order to produce the diff reports as docs
+      - mw -using R2022b matlab -nodesktop -batch "openProject('DCMotorCtrl.prj'); lastpush = '$previousCommit'; changeList = '$diffM'; diff_push(changeList,lastpush);"
+    artifacts:
+      when: always
+      paths:
+        - GeneratedArtifacts/DiffReports/
+
+mdlAdvisor-checks-job:       # This job runs in the model checks stage
+    stage: check
+    tags:
+      - on-prem
+    script:
+      - mw -using R2022b matlab -nodesktop -batch "openProject('DCMotorCtrl.prj'); runProjectChecks;"
+    artifacts:
+      when: always
+      paths:
+        - GeneratedArtifacts/CheckResults/
+
+unit-SlTest-job:   # This job runs in the test stage.
+    stage: test 
+    tags:
+        - on-prem
+    script:
+        - mw -using R2022b matlab -nodesktop -batch "openProject('DCMotorCtrl.prj'); results = runProjectTests; assertSuccess(results);"
+    artifacts:
+      when: always
+      paths:
+        - GeneratedArtifacts/TestResults/
+      reports:
+        junit: 
+        - GeneratedArtifacts/TestResults/*_results.xml
+        coverage_report:
+          coverage_format: cobertura
+          path: GeneratedArtifacts/TestResults/*_cov.xml
+
+codeGen-job:      # This job runs the codeGen stage.
+    stage: codeGen  
+    tags:
+        - on-prem
+    script:
+        - mw -using R2022b matlab -nodesktop -batch "openProject('DCMotorCtrl.prj'); genCCode;"
+    artifacts:
+        when: always
+        paths:
+            - GeneratedArtifacts/CodeGen/
+
+webviewGen-job:      # This job runs generated webviews of models
+    stage: webviewGen  
+    tags:
+        - on-prem
+    script:
+        - mw -using R2022b matlab -nodesktop -batch "openProject('DCMotorCtrl.prj'); genWebView;"
+    artifacts:
+        when: always
+        paths:
+            - GeneratedArtifacts/Webviews
+
+genSimpleApp:
+    stage: simpleAppGen
+    tags:
+        - on-prem
+    script:
+        - mw -using R2022b matlab -nodesktop -batch "openProject('DCMotorCtrl.prj'); genSimpleApp;"
+    artifacts:
+        when: always
+        paths:
+            - GeneratedArtifacts/DeployableApps
+
+# a stage to assert that all stages in this child pipeline have passed successfully.
+artifactGen:      # Final Stage to alert users this job is done.
+    stage: cleanUpandClose
+    tags:
+        - on-prem
+    script:
+        - echo "Job Done!"

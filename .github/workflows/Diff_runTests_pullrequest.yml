@@ -50,7 +50,7 @@ jobs:
       - name: Compare Models to Ancestors
         uses: matlab-actions/run-command@v1
         with:
-          command: openProject('DCMtrCtrl.prj'); changeList="${{ needs.diff-branches.outputs.diffM }}"; diffGitHub_pullrequest(changeList)
+          command: openProject('DCMtrCtrl.prj'); changeList="${{ needs.diff-branches.outputs.diffM }}"; diff_pullrequest(changeList)
       - name: Upload Comparison Reports
         uses: actions/upload-artifact@v3
         with:
